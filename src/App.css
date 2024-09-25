@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.img_main{
+  width: 400px;
+}
+
+.btn_main {
+  margin: 20px;
+  width: 150px;
+  height: 50px;
+  font-size: 30px;
+}
+
+.voltar:hover{
+  color: blue;
+}
+
+.voltar{
+  color: black;
+  font-size: 20px;
+  text-align: left;
+}

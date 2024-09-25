@@ -1,0 +1,11 @@
+.div_login {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    padding: 50px;
+    background-color: #212529;
+    text-align: center;
+    align-items: center;
+    border-radius: 10px;
+    color: white;
+}
