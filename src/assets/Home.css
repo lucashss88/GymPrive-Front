@@ -62,10 +62,6 @@
 }
 
 .home-button {
-    padding: 15px;
-    font-size: 18px;
-    background-color: #212529;
-    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -75,4 +71,12 @@
 
 .home-button:hover {
     background-color: #444a52;
+}
+
+.div_main_maior{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
 }

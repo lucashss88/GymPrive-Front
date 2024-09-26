@@ -88,7 +88,7 @@ const RegisterPage = () => {
                             onChange={(e) => setAge(e.target.value)}
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary">Registrar</button>
+                    <button type="submit" className="btn btn-light">Registrar</button>
                 </form>
             </div>
             

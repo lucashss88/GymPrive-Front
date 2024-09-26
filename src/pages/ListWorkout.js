@@ -7,6 +7,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ListWorkout = () => {
     const [workouts, setWorkouts] = useState([]);
@@ -15,13 +16,16 @@ const ListWorkout = () => {
     const [exercises, setExercises] = useState([]);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [formData, setFormData] = useState({ name: '', startDate: '', endDate: '', week: '' });
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchWorkouts = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('https://gymprive-back-production.up.railway.app/workouts', {
+                const response = await axios.get(`${API_URL}/workouts`, {
                     headers: { 'x-auth-token': token }
                 });
                 setWorkouts(response.data);
@@ -38,16 +42,11 @@ const ListWorkout = () => {
     const handleViewExercises = async (workoutId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`https://gymprive-back-production.up.railway.app/workouts/${workoutId}/exercises`, {
+            const response = await axios.get(`${API_URL}/workouts/${workoutId}/exercises`, {
                 headers: { 'x-auth-token': token }
             });
 
-            if (response.status === 204) {
-                setExercises([]); 
-            } else {
-                setExercises(response.data);
-            }
-            
+            setExercises(response.data.length > 0 ? response.data : []);
             const selectedWorkout = workouts.find(workout => workout.id === workoutId);
             setSelectedWorkout(selectedWorkout);
             
@@ -57,11 +56,55 @@ const ListWorkout = () => {
         }
     };
 
+    const handleEditWorkout = (workout) => {
+        setSelectedWorkout(workout);
+        setFormData({
+            name: workout.name,
+            startDate: workout.startDate,
+            endDate: workout.endDate,
+            week: workout.week
+        });
+        setShowEditModal(true);
+    };
+
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSaveWorkout = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.put(
+                `${API_URL}/workouts/${selectedWorkout.id}`,
+                formData,
+                {
+                    headers: { 'x-auth-token': token }
+                }
+            );
+            const updatedWorkout = response.data;
+
+            setWorkouts((prevWorkouts) =>
+                prevWorkouts.map((workout) =>
+                    workout.id === updatedWorkout.id ? updatedWorkout : workout
+                )
+            );
+
+            toast.success('Treino atualizado com sucesso!');
+            setShowEditModal(false);
+        } catch (error) {
+            toast.error('Erro ao atualizar o treino.');
+            console.error('Erro ao atualizar treino:', error);
+        }
+    };
+
     const handleDeleteWorkout = async (workoutId) => {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch(`https://gymprive-back-production.up.railway.app/workouts/${workoutId}`, {
+            const response = await fetch(`${API_URL}/workouts/${workoutId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -78,6 +121,28 @@ const ListWorkout = () => {
             toast.success('Treino deletado com sucesso!')
         } catch (error) {
             setError(error.message);
+        }
+    };
+
+    const handleDeleteExercise = async (workoutId, exerciseId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/workouts/${workoutId}/exercises/${exerciseId}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-auth-token': token
+                },
+            });
+
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                throw new Error(errorResponse.msg || 'Erro ao excluir exercício.');
+            }
+
+            setExercises((prevExercises) => prevExercises.filter(exercise => exercise.id !== exerciseId));
+            toast.success('Exercício deletado com sucesso!');
+        } catch (error) {
+            console.error('Erro ao excluir exercício:', error);
         }
     };
 
@@ -132,16 +197,17 @@ const ListWorkout = () => {
                         <td>{workout.endDate}</td>
                         <td>{workout.week}</td>
                         <td>
-                            <button className="btn bg-dark text-white" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
-                            <button className="btn bg-success text-white m-2" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
-                            <button className="btn bg-danger text-white" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
+                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
+                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
+                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar</button>
+                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
             
-            <Modal show={showModal} onHide={handleCloseModal}>
+            <Modal show={showModal} onHide={handleCloseModal} size="xl">
                 <Modal.Header closeButton>
                     <Modal.Title>Exercícios do Treino: {selectedWorkout?.name}</Modal.Title>
                 </Modal.Header>
@@ -155,6 +221,7 @@ const ListWorkout = () => {
                                 <th>Carga</th>
                                 <th>Sets</th>
                                 <th>Descrição</th>
+                                <th>Ações</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -165,6 +232,11 @@ const ListWorkout = () => {
                                     <td>{exercise.weight}</td>
                                     <td>{exercise.sets}</td>
                                     <td>{exercise.description}</td>
+                                    <td>
+                                        <button className="btn bg-danger" onClick={() => handleDeleteExercise(selectedWorkout.id, exercise.id)}>
+                                            Excluir
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -177,9 +249,70 @@ const ListWorkout = () => {
                     <Button variant="secondary" onClick={handleCloseModal}>
                         Fechar
                     </Button>
-                    <button className="btn bg-primary text-white" onClick={handleDownloadPDF}>
+                    <button className="btn btn-dark" onClick={handleDownloadPDF}>
                         Download em PDF
                     </button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Treino</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="startDate">Nome</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="startDate">Data Início</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                id="startDate"
+                                name="startDate"
+                                value={formData.startDate}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="endDate">Data Fim</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                id="endDate"
+                                name="endDate"
+                                value={formData.endDate}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="week">Semana</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="week"
+                                name="week"
+                                value={formData.week}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" className="btn btn-dark" onClick={handleSaveWorkout}>
+                        Salvar
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </div>

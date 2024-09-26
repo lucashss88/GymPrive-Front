@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [nameUser, setNameUser] = useState('');
     const [exercises, setExercises] = useState([]);
+    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -17,7 +18,7 @@ export const AuthProvider = ({ children }) => {
                 const token = localStorage.getItem('token');
                 if (token) {
                     axios.defaults.headers.common['x-auth-token'] = token;
-                    const response = await axios.get('https://gymprive-back-production.up.railway.app/auth/me');
+                    const response = await axios.get(`${API_URL}/auth/me`);
                     setUser(response.data.user);
                     setNameUser(response.data.user.name);
                 } else {
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password, weight, height, age) => {
         try {
-            const response = await axios.post('https://gymprive-back-production.up.railway.app/auth/register', {
+            const response = await axios.post(`${API_URL}/auth/register`, {
                 name,
                 email,
                 password,
@@ -58,7 +59,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post('https://gymprive-back-production.up.railway.app/auth/login', { email, password });
+            const response = await axios.post(`${API_URL}/auth/login`, { email, password });
             const { token, user } = response.data;
             localStorage.setItem('token', token);
             axios.defaults.headers.common['x-auth-token'] = token;
@@ -89,7 +90,7 @@ export const AuthProvider = ({ children }) => {
             const token = localStorage.getItem('token');
             if (token) {
                 axios.defaults.headers.common['x-auth-token'] = token;
-                const response = await axios.put('https://gymprive-back-production.up.railway.app/auth/me', updatedData);
+                const response = await axios.put(`${API_URL}/auth/me`, updatedData);
                 setUser(response.data.user);
                 setNameUser(response.data.user.name);
                 toast.success('Perfil atualizado com sucesso.');
@@ -105,7 +106,7 @@ export const AuthProvider = ({ children }) => {
 
     const resetPassword = async (email) => {
         try {
-            await axios.post('https://gymprive-back-production.up.railway.app/auth/reset-password', { email });
+            await axios.post(`${API_URL}/auth/reset-password`, { email });
             toast.success('Instruções de redefinição de senha enviadas.');
         } catch (error) {
             console.error('Erro ao solicitar redefinição de senha', error.response ? error.response.data : error);
@@ -127,7 +128,6 @@ export const AuthProvider = ({ children }) => {
 
     const removeAllExercises = () => {
         setExercises([]);
-        toast.success('Todos os exercícios foram removidos.');
     };
 
     return (

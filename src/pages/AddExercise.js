@@ -13,13 +13,14 @@ const AddExerciseScreen = ({ navigation }) => {
     const [description, setDescription] = useState('');
     const { addExercise } = useContext(AuthContext);
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const handleAddExercise = async () => {
         const newExercise = { name, reps, weight, sets, description };
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch(`https://gymprive-back-production.up.railway.app/workouts/${workoutId}/exercises`, {
+            const response = await fetch(`${API_URL}/workouts/${workoutId}/exercises`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,8 +75,8 @@ const AddExerciseScreen = ({ navigation }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
             />
-            <button className="button btn bg-dark text-white" onClick={handleAddExercise}>
-                <span className="buttonText">Adicionar Exercício</span>
+            <button className="button btn btn-dark" onClick={handleAddExercise}>
+                <span>Adicionar Exercício</span>
             </button>
         </div>
     );

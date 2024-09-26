@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/Login.css';
 import BackButton from './components/BackButton';
 import { AuthContext } from './context/AuthContext';
+import ft from '../assets/images/FTBW@2x.png';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -25,6 +26,7 @@ const LoginPage = () => {
             <BackButton />
             <div className="div_login">
                 <h2 className="mb-3">Login</h2>
+                <img src={ft} className="img_login" />
                 <form onSubmit={handleLogin}>
                     <div className="form-group mb-3">
                         <label>Email</label>
@@ -46,7 +48,7 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary">Login</button>
+                    <button type="submit" className="btn btn-light">Login</button>
                 </form>
             </div>
             
