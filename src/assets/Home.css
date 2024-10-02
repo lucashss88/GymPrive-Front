@@ -80,3 +80,40 @@
     text-align: center;
     padding: 20px;
 }
+
+@media only screen and (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .welcomeText {
+        font-size: 20px;
+    }
+
+    .button, .buttonLogout {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .button-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+/* Estilos para tablets */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+    .button-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .welcomeText {
+        font-size: 22px;
+    }
+
+    .button, .buttonLogout {
+        padding: 10px 18px;
+        font-size: 16px;
+    }
+}
