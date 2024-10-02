@@ -42,7 +42,7 @@ const ListWorkout = () => {
 
     const fetchWorkoutsByWeek = async (week) => {
         try {
-            const response = await axios.get(`https://gymprive-back-production.up.railway.app/by-week?week=${week}`, {
+            const response = await axios.get(`https://gymprive-back-production.up.railway.app/workouts/by-week?week=${week}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -50,7 +50,7 @@ const ListWorkout = () => {
             setWorkouts(response.data);
         } catch (err) {
             setError('Erro ao obter treinos. Verifique a semana selecionada.');
-            console.error('Erro ao buscar treinos por semana:', err);
+            console.error('Erro ao buscar treinos por semana:', err.response?.data || err.message););
         }
     };
 
@@ -202,7 +202,7 @@ const ListWorkout = () => {
             <BackButton />
             <h2>Lista de Treinos</h2>
 
-            <div className="form-group">
+            <div className="form-group mt-3 mb-3">
                 <label htmlFor="week-select">Filtrar por Semana:</label>
                 <select id="week-select" value={selectedWeek} onChange={handleWeekChange} className="form-control">
                     <option value="">Todas as Semanas</option>
