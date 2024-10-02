@@ -151,12 +151,10 @@ const ListWorkout = () => {
 
         doc.text(`Exercícios do Treino: ${selectedWorkout?.name}`, 14, 16);
         doc.autoTable({
-            head: [['Nome', 'Repetições', 'Carga', 'Sets', 'Descrição']],
+            head: [['Nome', 'Carga', 'Descrição']],
             body: exercises.map(exercise => [
                 exercise.name,
-                exercise.reps,
                 exercise.weight,
-                exercise.sets,
                 exercise.description,
             ]),
             startY: 26,
@@ -217,9 +215,7 @@ const ListWorkout = () => {
                             <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Repetições</th>
                                 <th>Carga</th>
-                                <th>Sets</th>
                                 <th>Descrição</th>
                                 <th>Ações</th>
                             </tr>
@@ -228,9 +224,7 @@ const ListWorkout = () => {
                             {exercises.map((exercise) => (
                                 <tr key={exercise.id}>
                                     <td>{exercise.name}</td>
-                                    <td>{exercise.reps}</td>
                                     <td>{exercise.weight}</td>
-                                    <td>{exercise.sets}</td>
                                     <td>{exercise.description}</td>
                                     <td>
                                         <button className="btn bg-danger" onClick={() => handleDeleteExercise(selectedWorkout.id, exercise.id)}>

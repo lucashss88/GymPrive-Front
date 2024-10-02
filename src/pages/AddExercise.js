@@ -7,16 +7,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 const AddExerciseScreen = ({ navigation }) => {
     const { workoutId } = useParams();
     const [name, setName] = useState('');
-    const [reps, setReps] = useState('');
     const [weight, setWeight] = useState('');
-    const [sets, setSets] = useState('');
     const [description, setDescription] = useState('');
     const { addExercise } = useContext(AuthContext);
     const navigate = useNavigate();
     const API_URL = process.env.REACT_APP_API_URL;
 
     const handleAddExercise = async () => {
-        const newExercise = { name, reps, weight, sets, description };
+        const newExercise = { name, weight, description };
         try {
             const token = localStorage.getItem('token');
 
@@ -53,21 +51,9 @@ const AddExerciseScreen = ({ navigation }) => {
             />
             <input
                 className="input"
-                placeholder="Repetições"
-                value={reps}
-                onChange={(e) => setReps(e.target.value)}
-            />
-            <input
-                className="input"
                 placeholder="Carga"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-            />
-            <input
-                className="input"
-                placeholder="Sets"
-                value={sets}
-                onChange={(e) => setSets(e.target.value)}
             />
             <input
                 className="input"
