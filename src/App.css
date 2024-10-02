@@ -52,3 +52,17 @@
   font-size: 20px;
   text-align: left;
 }
+
+@media only screen and (max-width: 600px) {
+  .img_main {
+    width: 120px;
+  }
+
+}
+
+/* Responsivo para tablets */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+  .img_main{
+    width: 200px;
+  }
+}
