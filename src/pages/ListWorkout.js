@@ -15,6 +15,7 @@ const ListWorkout = () => {
     const [error, setError] = useState(null);
     const [exercises, setExercises] = useState([]);
     const [selectedWorkout, setSelectedWorkout] = useState(null);
+    const [selectedWeek, setSelectedWeek] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [formData, setFormData] = useState({ name: '', startDate: '', endDate: '', week: '' });
@@ -38,6 +39,30 @@ const ListWorkout = () => {
 
         fetchWorkouts();
     }, []);
+
+    const fetchWorkoutsByWeek = async (week) => {
+        try {
+            const response = await axios.get(`https://gymprive-back-production.up.railway.app/by-week?week=${week}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            setWorkouts(response.data);
+        } catch (err) {
+            setError('Erro ao obter treinos. Verifique a semana selecionada.');
+            console.error('Erro ao buscar treinos por semana:', err);
+        }
+    };
+
+    const handleWeekChange = (event) => {
+        const week = event.target.value;
+        setSelectedWeek(week);
+
+        if (week) {
+            fetchWorkoutsByWeek(week);
+        }
+    };
+
 
     const handleViewExercises = async (workoutId) => {
         try {
@@ -176,6 +201,18 @@ const ListWorkout = () => {
         <div className="container">
             <BackButton />
             <h2>Lista de Treinos</h2>
+
+            <div className="form-group">
+                <label htmlFor="week-select">Filtrar por Semana:</label>
+                <select id="week-select" value={selectedWeek} onChange={handleWeekChange} className="form-control">
+                    <option value="">Todas as Semanas</option>
+                    <option value="Semana 1">Semana 1</option>
+                    <option value="Semana 2">Semana 2</option>
+                    <option value="Semana 3">Semana 3</option>
+                    <option value="Semana 4">Semana 4</option>
+                </select>
+            </div>
+
             {error && <p className="error">{error}</p>}
             <table className="table">
                 <thead>
@@ -188,20 +225,26 @@ const ListWorkout = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {workouts.map((workout) => (
-                    <tr key={workout.id}>
-                        <td>{workout.name}</td>
-                        <td>{new Date(workout.startDate).toLocaleDateString('pt-BR')}</td>
-                        <td>{new Date(workout.endDate).toLocaleDateString('pt-BR')}</td>
-                        <td>{workout.week}</td>
-                        <td>
-                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
-                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
-                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar</button>
-                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
-                        </td>
+                {workouts.length > 0 ? (
+                    workouts.map((workout) => (
+                        <tr key={workout.id}>
+                            <td>{workout.name}</td>
+                            <td>{new Date(workout.startDate).toLocaleDateString('pt-BR')}</td>
+                            <td>{new Date(workout.endDate).toLocaleDateString('pt-BR')}</td>
+                            <td>{workout.week}</td>
+                            <td>
+                                <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
+                                <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
+                                <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar</button>
+                                <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
+                            </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="5">Nenhum treino encontrado para a semana selecionada.</td>
                     </tr>
-                ))}
+                )}
                 </tbody>
             </table>
             
