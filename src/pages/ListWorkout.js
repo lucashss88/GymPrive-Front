@@ -50,7 +50,7 @@ const ListWorkout = () => {
             setWorkouts(response.data);
         } catch (err) {
             setError('Erro ao obter treinos. Verifique a semana selecionada.');
-            console.error('Erro ao buscar treinos por semana:', err.response?.data || err.message););
+            console.error('Erro ao buscar treinos por semana:', err.response?.data || err.message);
         }
     };
 
