@@ -191,8 +191,8 @@ const ListWorkout = () => {
                 {workouts.map((workout) => (
                     <tr key={workout.id}>
                         <td>{workout.name}</td>
-                        <td>{workout.startDate}</td>
-                        <td>{workout.endDate}</td>
+                        <td>{new Date(workout.startDate).toLocaleDateString('pt-BR')}</td>
+                        <td>{new Date(workout.endDate).toLocaleDateString('pt-BR')}</td>
                         <td>{workout.week}</td>
                         <td>
                             <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
