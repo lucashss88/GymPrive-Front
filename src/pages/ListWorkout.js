@@ -17,6 +17,7 @@ const ListWorkout = () => {
     const [selectedWorkout, setSelectedWorkout] = useState(null);
     const [selectedWeek, setSelectedWeek] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [noWorkoutsMessage, setNoWorkoutsMessage] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
     const [formData, setFormData] = useState({ name: '', startDate: '', endDate: '', week: '' });
     const navigate = useNavigate();
@@ -47,6 +48,15 @@ const ListWorkout = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             });
+
+            const fetchedWorkouts = response.data;
+
+            if (fetchedWorkouts.length === 0) {
+                setNoWorkoutsMessage('Nenhum treino encontrado para a semana escolhida.');
+            } else {
+                setNoWorkoutsMessage('');
+            }
+
             setWorkouts(response.data);
         } catch (err) {
             setError('Erro ao obter treinos. Verifique a semana selecionada.');
@@ -213,6 +223,7 @@ const ListWorkout = () => {
                 </select>
             </div>
 
+            {noWorkoutsMessage && <p>{noWorkoutsMessage}</p>}
             {error && <p className="error">{error}</p>}
             <table className="table">
                 <thead>
@@ -225,26 +236,20 @@ const ListWorkout = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {workouts.length > 0 ? (
-                    workouts.map((workout) => (
-                        <tr key={workout.id}>
-                            <td>{workout.name}</td>
-                            <td>{new Date(workout.startDate).toLocaleDateString('pt-BR')}</td>
-                            <td>{new Date(workout.endDate).toLocaleDateString('pt-BR')}</td>
-                            <td>{workout.week}</td>
-                            <td>
-                                <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
-                                <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
-                                <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar</button>
-                                <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
-                            </td>
-                        </tr>
-                    ))
-                ) : (
-                    <tr>
-                        <td colSpan="5">Nenhum treino encontrado para a semana selecionada.</td>
+                {workouts.map((workout) => (
+                    <tr key={workout.id}>
+                        <td>{workout.name}</td>
+                        <td>{new Date(workout.startDate).toLocaleDateString('pt-BR')}</td>
+                        <td>{new Date(workout.endDate).toLocaleDateString('pt-BR')}</td>
+                        <td>{workout.week}</td>
+                        <td>
+                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
+                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
+                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar</button>
+                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
+                        </td>
                     </tr>
-                )}
+                ))}
                 </tbody>
             </table>
             
