@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../assets/Workout.css';
-import BackButton from "./components/BackButton";
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaTrash, FaEdit, FaEye, FaDownload, FaCheck, FaDumbbell, FaPlus, FaCheckSquare, FaArrowLeft } from 'react-icons/fa';
 
 const ListWorkout = () => {
     const [workouts, setWorkouts] = useState([]);
@@ -20,6 +20,9 @@ const ListWorkout = () => {
     const [noWorkoutsMessage, setNoWorkoutsMessage] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
     const [formData, setFormData] = useState({ name: '', startDate: '', endDate: '', week: '' });
+    const [showEditExerciseModal, setShowEditExerciseModal] = useState(false);
+    const [exerciseFormData, setExerciseFormData] = useState({ name: '', weight: '', description: '' });
+    const [selectedExercise, setSelectedExercise] = useState(null);
     const navigate = useNavigate();
     const API_URL = process.env.REACT_APP_API_URL;
 
@@ -159,6 +162,49 @@ const ListWorkout = () => {
         }
     };
 
+    const handleEditExercise = (exercise) => {
+        setSelectedExercise(exercise);
+        setExerciseFormData({
+            name: exercise.name,
+            weight: exercise.weight,
+            description: exercise.description,
+        });
+        setShowEditExerciseModal(true);
+    };
+
+    const handleExerciseInputChange = (e) => {
+        setExerciseFormData({
+            ...exerciseFormData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSaveExercise = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.put(
+                `${API_URL}/workouts/${selectedWorkout.id}/exercises/${selectedExercise.id}`,
+                exerciseFormData,
+                {
+                    headers: { 'x-auth-token': token }
+                }
+            );
+            const updatedExercise = response.data;
+
+            setExercises((prevExercises) =>
+                prevExercises.map((exercise) =>
+                    exercise.id === updatedExercise.id ? updatedExercise : exercise
+                )
+            );
+
+            toast.success('Exercício atualizado com sucesso!');
+            setShowEditExerciseModal(false);
+        } catch (error) {
+            toast.error('Erro ao atualizar exercício.');
+            console.error('Erro ao atualizar exercício:', error);
+        }
+    };
+    
     const handleDeleteExercise = async (workoutId, exerciseId) => {
         try {
             const token = localStorage.getItem('token');
@@ -204,24 +250,28 @@ const ListWorkout = () => {
         setSelectedWorkout(null);
     };
 
+    const handleBack = () => {
+        navigate('/home');
+    };
+
     if (loading) return <p>Carregando...</p>;
     if (error) return <p>Erro: {error}</p>;
 
     return (
         <div className="container">
-            <BackButton />
-            <h2>Lista de Treinos</h2>
+            <p onClick={handleBack} className='voltar'><FaArrowLeft /></p>
+            <h2 id="title-list">Lista de Treinos</h2>
 
-            <div className="form-group mt-3 mb-3">
-                <label htmlFor="week-select">Filtrar por Semana:</label>
-                <select id="week-select" value={selectedWeek} onChange={handleWeekChange} className="form-control">
-                    <option value="">Todas as Semanas</option>
-                    <option value="Semana 1">Semana 1</option>
-                    <option value="Semana 2">Semana 2</option>
-                    <option value="Semana 3">Semana 3</option>
-                    <option value="Semana 4">Semana 4</option>
-                </select>
-            </div>
+            {/*<div className="form-group mt-3 mb-3">*/}
+            {/*    <label htmlFor="week-select">Filtrar por Semana:</label>*/}
+            {/*    <select id="week-select" value={selectedWeek} onChange={handleWeekChange} className="form-control">*/}
+            {/*        <option value="">Todas as Semanas</option>*/}
+            {/*        <option value="Semana 1">Semana 1</option>*/}
+            {/*        <option value="Semana 2">Semana 2</option>*/}
+            {/*        <option value="Semana 3">Semana 3</option>*/}
+            {/*        <option value="Semana 4">Semana 4</option>*/}
+            {/*    </select>*/}
+            {/*</div>*/}
 
             {noWorkoutsMessage && <p>{noWorkoutsMessage}</p>}
             {error && <p className="error">{error}</p>}
@@ -231,7 +281,6 @@ const ListWorkout = () => {
                     <th>Nome</th>
                     <th>Data Início</th>
                     <th>Data Fim</th>
-                    <th>Semana</th>
                     <th>Ações</th>
                 </tr>
                 </thead>
@@ -239,19 +288,19 @@ const ListWorkout = () => {
                 {workouts.map((workout) => (
                     <tr key={workout.id}>
                         <td>{workout.name}</td>
-                        <td>{new Date(workout.startDate).toLocaleDateString('pt-BR')}</td>
-                        <td>{new Date(workout.endDate).toLocaleDateString('pt-BR')}</td>
-                        <td>{workout.week}</td>
+                        <td>{new Date(workout.startDate).toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' })}</td>
+                        <td>{new Date(workout.endDate).toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' })}</td>
                         <td>
-                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios</button>
-                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício</button>
-                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar</button>
-                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar</button>
+                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}><FaDumbbell /></button>
+                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}><FaPlus /></button>
+                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}><FaEdit /></button>
+                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}><FaTrash /></button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+            <button className="btn btn-dark m-1" onClick={() => navigate('/create-workout')}>Criar Treino</button>
             
             <Modal show={showModal} onHide={handleCloseModal} size="xl">
                 <Modal.Header closeButton>
@@ -275,8 +324,11 @@ const ListWorkout = () => {
                                     <td>{exercise.weight}</td>
                                     <td>{exercise.description}</td>
                                     <td>
+                                        <button className="btn btn-dark m-1" onClick={() => handleEditExercise(exercise)}>
+                                            <FaEdit />
+                                        </button>
                                         <button className="btn bg-danger" onClick={() => handleDeleteExercise(selectedWorkout.id, exercise.id)}>
-                                            Excluir
+                                            <FaTrash />
                                         </button>
                                     </td>
                                 </tr>
@@ -288,14 +340,61 @@ const ListWorkout = () => {
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Fechar
-                    </Button>
                     <button className="btn btn-dark" onClick={handleDownloadPDF}>
-                        Download em PDF
+                        <FaDownload />
                     </button>
                 </Modal.Footer>
             </Modal>
+
+
+            <Modal show={showEditExerciseModal} onHide={() => setShowEditExerciseModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar Exercício</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="name">Nome</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="name"
+                                name="name"
+                                value={exerciseFormData.name}
+                                onChange={handleExerciseInputChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="weight">Carga</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="weight"
+                                name="weight"
+                                value={exerciseFormData.weight}
+                                onChange={handleExerciseInputChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="description">Descrição</label>
+                            <textarea
+                                className="form-control"
+                                id="description"
+                                name="description"
+                                value={exerciseFormData.description}
+                                onChange={handleExerciseInputChange}
+                            />
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" className="btn btn-dark" onClick={handleSaveExercise}>
+                        <FaCheck />
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            
             <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Editar Treino</Modal.Title>
@@ -349,11 +448,8 @@ const ListWorkout = () => {
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-                        Cancelar
-                    </Button>
                     <Button variant="primary" className="btn btn-dark" onClick={handleSaveWorkout}>
-                        Salvar
+                        <FaCheck />
                     </Button>
                 </Modal.Footer>
             </Modal>

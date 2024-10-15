@@ -15,7 +15,7 @@ const LoginPage = () => {
         e.preventDefault();
         try {
             await login(email, password);
-            navigate('/home');
+            navigate('/list-workout');
         } catch (error) {
             console.error('Erro ao fazer login', error);
         }

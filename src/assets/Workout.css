@@ -90,17 +90,25 @@ h2, h3 {
     }
 
     .table th, .table td {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
-    .table button {
         padding: 6px 8px;
         font-size: 12px;
     }
 
+    .table button {
+        font-size: 12px;
+        width: 100%;
+    }
+
     .table th {
+        font-size: 12px;
+    }
+
+    #week-select{
         font-size: 14px;
+    }
+
+    #title-list{
+        font-size: 24px;
     }
 }
 

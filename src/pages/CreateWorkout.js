@@ -79,12 +79,12 @@ const CreateWorkout = ({ navigation }) => {
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
             />
-            <select className="input" value={week} onChange={(e) => setWeek(e.target.value)}>
-                <option value="Semana 1">Semana 1</option>
-                <option value="Semana 2">Semana 2</option>
-                <option value="Semana 3">Semana 3</option>
-                <option value="Semana 4">Semana 4</option>
-            </select>
+            {/*<select className="input" value={week} onChange={(e) => setWeek(e.target.value)}>*/}
+            {/*    <option value="Semana 1">Semana 1</option>*/}
+            {/*    <option value="Semana 2">Semana 2</option>*/}
+            {/*    <option value="Semana 3">Semana 3</option>*/}
+            {/*    <option value="Semana 4">Semana 4</option>*/}
+            {/*</select>*/}
             <button className="button btn btn-dark " onClick={handleCreateWorkout}>Criar Treino</button>
         </div>
     );
