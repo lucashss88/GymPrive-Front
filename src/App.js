@@ -8,6 +8,7 @@ import MainPage from './pages/MainPage';
 import AddExercise from './pages/AddExercise';
 import CreateWorkout from './pages/CreateWorkout';
 import ListWorkout from './pages/ListWorkout';
+import EditProfile from './pages/EditProfile';
 import { ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/add-exercise/:workoutId" element={<AddExercise />} />
                     <Route path="/create-workout" element={<CreateWorkout />} />
                     <Route path="/list-workout" element={<ListWorkout />} />
+                    <Route path="/edit-profile" element={<EditProfile />} />
                 </Routes>
             </Router>
             <ToastContainer />

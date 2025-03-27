@@ -4,6 +4,7 @@ import axios from "axios";
 import BackButton from "./components/BackButton";
 import { useNavigate } from 'react-router-dom';
 import '../assets/Workout.css';
+import ft from '../assets/images/FTnew@2x.png';
 
 const CreateWorkout = ({ navigation }) => {
     const [startDate, setStartDate] = useState('');
@@ -58,12 +59,13 @@ const CreateWorkout = ({ navigation }) => {
     return (
         <div className="container">
             <BackButton />
+            <img src={ft} className="img_login" />
             <h2>Criar Treino</h2>
             <input
                 className="input"
                 placeholder="Nome do Treino"
-                value={workoutName} 
-                onChange={(e) => setWorkoutName(e.target.value)} 
+                value={workoutName}
+                onChange={(e) => setWorkoutName(e.target.value)}
             />
             <input
                 className="input"

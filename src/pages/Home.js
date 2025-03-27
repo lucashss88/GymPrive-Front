@@ -3,6 +3,7 @@ import { AuthContext } from './context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../assets/Home.css';
 import ftb from '../assets/images/FTB@2x.png';
+import ftn from '../assets/images/ftMartelo@3x.png';
 
 const HomePage = () => {
     const { user, logout } = useContext(AuthContext);
@@ -22,8 +23,8 @@ const HomePage = () => {
       <div className="container">
         {user ? (
           <>
-            <img src={ftb} className="img_main mb-6"/>
             <h1 className="welcomeText">Bem-vindo, {user.email}!</h1>
+            <img src={ftn} className="img_main mb-6"/>
             <div className="button-grid">
               <button
                 className="home-button btn btn-dark btn-lg"

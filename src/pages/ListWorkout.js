@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaTrash, FaEdit, FaEye, FaDownload, FaCheck, FaDumbbell, FaPlus, FaCheckSquare, FaArrowLeft } from 'react-icons/fa';
+import ft from '../assets/images/FTnew@2x.png';
 
 const ListWorkout = () => {
     const [workouts, setWorkouts] = useState([]);
@@ -260,6 +261,7 @@ const ListWorkout = () => {
     return (
         <div className="container">
             <p onClick={handleBack} className='voltar'><FaArrowLeft /></p>
+            <img src={ft} className="img_login" />
             <h2 id="title-list">Lista de Treinos</h2>
 
             {/*<div className="form-group mt-3 mb-3">*/}
@@ -291,10 +293,10 @@ const ListWorkout = () => {
                         <td>{new Date(workout.startDate).toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' })}</td>
                         <td>{new Date(workout.endDate).toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' })}</td>
                         <td>
-                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}><FaDumbbell /></button>
-                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}><FaPlus /></button>
-                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}><FaEdit /></button>
-                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}><FaTrash /></button>
+                            <button className="btn btn-dark m-1" onClick={() => handleViewExercises(workout.id)}>Ver Exercícios <FaDumbbell /></button>
+                            <button className="btn btn-dark m-1" onClick={() => navigate(`/add-exercise/${workout.id}`)}>Adicionar Exercício <FaPlus /></button>
+                            <button className="btn btn-dark m-1" onClick={() => handleEditWorkout(workout)}>Editar <FaEdit /></button>
+                            <button className="btn bg-danger m-1" onClick={() => handleDeleteWorkout(workout.id)}>Deletar <FaTrash /></button>
                         </td>
                     </tr>
                 ))}

@@ -93,7 +93,6 @@ export const AuthProvider = ({ children }) => {
                 const response = await axios.put(`${API_URL}/auth/me`, updatedData);
                 setUser(response.data.user);
                 setNameUser(response.data.user.name);
-                toast.success('Perfil atualizado com sucesso.');
             } else {
                 toast.error('Usuário não autenticado.');
             }

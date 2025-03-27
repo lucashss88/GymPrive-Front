@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/Login.css';
 import BackButton from './components/BackButton';
 import { AuthContext } from './context/AuthContext';
-import ft from '../assets/images/FTBW@2x.png';
+import ft from '../assets/images/fitMarteloBW@3x.png';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
