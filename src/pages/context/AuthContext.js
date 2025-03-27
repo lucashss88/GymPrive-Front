@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
                 const token = localStorage.getItem('token');
                 if (token) {
                     axios.defaults.headers.common['x-auth-token'] = token;
-                    const response = await axios.get(`${API_URL}/auth/me`);
+                    const response = await axios.get(`$https://localhost:3001/auth/me`);
                     setUser(response.data.user);
                     setNameUser(response.data.user.name);
                 } else {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password, weight, height, age) => {
         try {
-            const response = await axios.post(`${API_URL}/auth/register`, {
+            const response = await axios.post(`$https://localhost:3001/auth/register`, {
                 name,
                 email,
                 password,
